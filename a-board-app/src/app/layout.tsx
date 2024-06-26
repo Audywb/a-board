@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <CustomNavbar menu={menu}/>
-        <div className="flex bg-gray-100">
+        <div className="lg:flex bg-gray-100">
           <div className="hidden lg:block  text-green-500 w-64 h-full min-h-screen p-4">
             <CustomSidebar menu={menu}/>
           </div>
