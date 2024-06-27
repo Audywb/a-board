@@ -61,7 +61,7 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="px-1 lg:pl-2 w-96">
+          <div className="lg:pl-2 w-96">
             <details className="dropdown">
               <summary className="btn m-1 bg-transparent border-none hover:bg-transparent shadow-none text-text-base">
                 Community{" "}
