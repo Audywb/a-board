@@ -17,9 +17,9 @@ interface PostItem {
   body: string;
 }
 
-export default function Home() {
-  const router = useRouter()
+export default function OurBlog() {
   const { data: session } = useSession();
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSpinner, setIsSpinner] = useState<boolean>(false);
@@ -30,15 +30,22 @@ export default function Home() {
   const [community, setCommunity] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [body, setBody] = useState<string>("");
+  const [_id, set_ID] = useState<string>("");
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    const username = session?.user?.name;
+    if (username) {
+      fetchPosts(username);
+    }else{
+      router.push("/sign-in")
+    }
+  }, [session]);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (username: string) => {
     try {
       const response = await axios.get(
-        process.env.NEXT_PUBLIC_API_BASE_URL_AUTH + "/post/all-post"
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_AUTH}/post/by-username?username=${username}`
       );
       setPosts(response.data);
       setIsLoading(false);
@@ -68,17 +75,32 @@ export default function Home() {
   };
 
   const openModal = () => {
-    if (session?.user){
     const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
     if (modal) {
       modal.showModal();
-    }}else{
-      router.push("/sign-in")
     }
   };
 
   const closeModal = () => {
     const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
+    if (modal) {
+      modal.close();
+      setTitle("");
+      setCommunity("");
+      setBody("");
+      setIsEdit(false);
+    }
+  };
+
+  const openModalDelete = () => {
+    const modal = document.getElementById("modal_delete") as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
+  const closeModalDelete = () => {
+    const modal = document.getElementById("modal_delete") as HTMLDialogElement;
     if (modal) {
       modal.close();
     }
@@ -107,23 +129,48 @@ export default function Home() {
     console.log("Submit:", community, title, body, session?.user?.name);
     const username = session?.user?.name;
     try {
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_API_BASE_URL_AUTH + "/post/create",
-        {
-          username,
-          community,
-          title,
-          body,
+      if (isEdit) {
+        const response = await axios.put(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL_AUTH}/post/update/${_id}`,
+          {
+            username,
+            community,
+            title,
+            body,
+          }
+        );
+        if (response.data) {
+          setErrorCreate(false);
+          setIsSpinner(false);
+          closeModal();
+          setTitle("");
+          setCommunity("");
+          setBody("");
+          if (username) {
+            await fetchPosts(username);
+          }
         }
-      );
-      if (response.data) {
-        setErrorCreate(false);
-        setIsSpinner(false);
-        fetchPosts();
-        closeModal();
-        setTitle("");
-        setCommunity("");
-        setBody("");
+      } else {
+        const response = await axios.post(
+          process.env.NEXT_PUBLIC_API_BASE_URL_AUTH + "/post/create",
+          {
+            username,
+            community,
+            title,
+            body,
+          }
+        );
+        if (response.data) {
+          setErrorCreate(false);
+          setIsSpinner(false);
+          closeModal();
+          setTitle("");
+          setCommunity("");
+          setBody("");
+          if (username) {
+            await fetchPosts(username);
+          }
+        }
       }
     } catch (err) {
       setErrorCreate(true);
@@ -133,15 +180,42 @@ export default function Home() {
   };
 
   const handleEdit = (item: PostItem) => {
-    // console.log(item)
+    console.log(item);
+    setIsEdit(true);
+    set_ID(item._id);
+    setCommunity(item.community);
+    setTitle(item.title);
+    setBody(item.body);
+    openModal();
   };
 
   const handleDelete = (id: string) => {
-    // console.log(id)
+    console.log("Delete:", id);
+    set_ID(id);
+    openModalDelete();
+  };
+
+  const confirmDelete = async () => {
+    const username = session?.user?.name;
+    try {
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL_AUTH}/post/delete/${_id}`
+      );
+      console.log(response);
+      if (response.statusText == "OK") {
+        set_ID("");
+        closeModalDelete();
+        if (username) {
+          await fetchPosts(username);
+        }
+      }
+    } catch (err) {
+      console.log("Failed to delete post.");
+    }
   };
 
   return (
-    <div className="flex bg-gray-100">
+    <div className="flex">
       <div className="w-full">
         <div
           className={`flex justify-start w-full ${
@@ -203,7 +277,7 @@ export default function Home() {
         <div>
           <PostCard
             post={posts}
-            edit={false}
+            edit={true}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
@@ -219,17 +293,22 @@ export default function Home() {
           </form>
           <h3 className="font-bold text-xl text-text-base">Create Post!</h3>
           <div className="mt-4">
-            <SelectCommu onSelect={handleSelectedCommu} defaultValue="" />
+            <SelectCommu
+              onSelect={handleSelectedCommu}
+              defaultValue={community || ""}
+            />
             <input
               type="text"
               placeholder="Title"
               className="input input-bordered w-full mt-2"
               onChange={handleTitleChange}
+              value={title || ""}
             />
             <textarea
               className="w-full textarea textarea-bordered mt-2 min-h-[10rem]"
               placeholder="What's on your mind..."
               onChange={handleBodyChange}
+              value={body || ""}
             ></textarea>
           </div>
           {errorCreate && (
@@ -242,7 +321,10 @@ export default function Home() {
           )}
           <div className="flex justify-end mt-2">
             <form method="dialog">
-              <button className="bg-white hover:bg-green-100 border-success border-2 text-success py-2 px-1.5 lg:px-2 xl:px-4 rounded-lg text-sm font-semibold mx-2 w-24">
+              <button
+                className="bg-white hover:bg-green-100 border-success border-2 text-success py-2 px-1.5 lg:px-2 xl:px-4 rounded-lg text-sm font-semibold mx-2 w-24"
+                onClick={closeModal}
+              >
                 Cancel
               </button>
             </form>
@@ -252,6 +334,8 @@ export default function Home() {
             >
               {isSpinner ? (
                 <span className="loading loading-dots loading-sm"></span>
+              ) : isEdit ? (
+                "Confirm"
               ) : (
                 "Post"
               )}
@@ -262,6 +346,37 @@ export default function Home() {
           <button type="button" onClick={closeModal}>
             close
           </button>
+        </form>
+      </dialog>
+      <dialog id="modal_delete" className="modal">
+        <div className="modal-box flex flex-col items-center w-96">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-xl text-center">
+            Please confirm if you wish to delete the post
+          </h3>
+          <p className="py-2 text-center">
+            Are you sure you want to delete the post? <br /> Once deleted, it
+            connot be recovered.
+          </p>
+          <button
+            className="bg-[#F23536] hover:bg-[#d53232] w-full text-white py-2.5 px-1.5 lg:px-2 xl:px-4 rounded-lg text-sm font-semibold mt-2"
+            onClick={confirmDelete}
+          >
+            Delete
+          </button>
+          <button
+            className="bg-white hover:bg-[#f0f0f0] border-gray-300 border-2 text-text-base py-2.5 px-1.5 lg:px-2 xl:px-4 rounded-lg text-sm font-semibold w-full mt-2"
+            onClick={closeModalDelete}
+          >
+            Cancel
+          </button>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
         </form>
       </dialog>
     </div>

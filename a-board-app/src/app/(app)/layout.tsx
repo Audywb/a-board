@@ -39,7 +39,7 @@ export default async function RootLayout({
             <div className="hidden lg:block  text-green-500 w-64 h-full min-h-screen p-4">
               <CustomSidebar menu={menu} />
             </div>
-            <div className="flex-1 p-4 min-h-screen">{children}</div>
+            <div className="flex-1 min-h-screen bg-gray-100">{children}</div>
           </div>
         </Providers>
       </body>

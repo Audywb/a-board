@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import aboardWhite from "@public/logo/aboard-white.svg"
+import aboardWhite from "@public/logo/aboard-white.svg";
 import { Castoro } from "next/font/google";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface MenuItem {
   path: string;
@@ -14,11 +16,12 @@ interface CustomNavbarProps {
   menu: MenuItem[];
 }
 
-const castoro = Castoro({ weight: '400' ,subsets: ["latin"] });
+const castoro = Castoro({ weight: "400", subsets: ["latin"] });
 
 const CustomNavbar: React.FC<CustomNavbarProps> = ({ menu }) => {
-
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const handleIsOpen = () => {
     setIsOpen(!isOpen);
@@ -38,12 +41,12 @@ const CustomNavbar: React.FC<CustomNavbarProps> = ({ menu }) => {
           <div className="flex items-center justify-between">
             <Link href="/">
               <Image
-                  className="w-auto h-4 lg:h-5"
-                  src={aboardWhite}
-                  alt="a Board logo"
-                  width={100}
-                  height={15}
-                />
+                className="w-auto h-4 lg:h-5"
+                src={aboardWhite}
+                alt="a Board logo"
+                width={100}
+                height={15}
+              />
             </Link>
             <div className="flex lg:hidden">
               <button
@@ -86,6 +89,7 @@ const CustomNavbar: React.FC<CustomNavbarProps> = ({ menu }) => {
               </button>
             </div>
           </div>
+
           <div
             className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-green-500 text-white lg:mt-0 lg:p-0 lg:top-0 lg:relative lg:bg-transparent lg:w-auto lg:opacity-100 lg:translate-x-0 lg:items-center lg:hidden ${
               isOpen
@@ -94,24 +98,70 @@ const CustomNavbar: React.FC<CustomNavbarProps> = ({ menu }) => {
             }`}
           >
             <div className="flex flex-col -mx-2 lg:flex-row lg:items-center lg:mx-8">
-              {menu && menu.map((item, index) => (
-                <a key={index} href={item.path} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                  {item.name}
-                </a>
-              ))}
+              {menu &&
+                menu.map((item, index) => (
+                  <a
+                    key={index}
+                    href={item.path}
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    {item.name}
+                  </a>
+                ))}
             </div>
-            {isOpen && 
-            <div className={`${castoro.className} flex justify-center translate-x-0 opacity-100`}>
-              <button className="bg-success hover:bg-green-300 text-white py-2 px-4 rounded-xl">
+            {isOpen && (
+              <div
+                className={`${castoro.className} flex justify-start translate-x-0 opacity-100`}
+              >
+                {session && session?.user ? (
+                  <div className="flex">
+                    <div className="text-white font-medium px-2">
+                      <div>{session?.user?.name}</div>
+                    </div>
+                    <div className="avatar">
+                      <div className="rounded-full w-9 h-9 -my-1 mr-2">
+                        <Image
+                          src="/profile/testprofile.jpg"
+                          width={22}
+                          height={22}
+                          alt="profile photo"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <button className="bg-success hover:bg-green-300 text-white py-2 px-4 rounded-xl">
+                    Sign In
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+          <div className={`hidden lg:block`}>
+            {session && session?.user ? (
+              <div className="flex">
+                <div className="text-white font-medium px-2">
+                  <div>{session.user.name}</div>
+                </div>
+                <div className="avatar">
+                  <div className="rounded-full w-9 h-9 -my-1 mr-2">
+                    <Image
+                      src="/profile/testprofile.jpg"
+                      width={22}
+                      height={22}
+                      alt="profile photo"
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button
+                className={`${castoro.className} bg-success hover:bg-green-300 text-white py-2 px-4 rounded-xl`}
+                onClick={() => router.push("/sign-in")}
+              >
                 Sign In
               </button>
-            </div>
-            }
-          </div>
-          <div className={`${castoro.className} hidden lg:block`}>
-            <button className="bg-success hover:bg-green-300 text-white py-2 px-4 rounded-xl">
-              Sign In
-            </button>
+            )}
           </div>
         </div>
       </div>
