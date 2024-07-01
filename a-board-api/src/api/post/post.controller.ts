@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Query, Header, Put, Param, NotFoundException, Delete  } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto, UpdatePostDto } from './dto/create-post.dto';
-import { Posts } from 'src/schemas/post.schema';
+import { Posts } from '../../schemas/post.schema';
 
 @Controller('post')
 export class PostController {
