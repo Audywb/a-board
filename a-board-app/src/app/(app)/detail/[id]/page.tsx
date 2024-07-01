@@ -35,7 +35,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
 
   useEffect(() => {
-    console.log(params.id);
+    // console.log(params.id);
     fetchPosts(params.id);
   }, [params]);
 
@@ -77,7 +77,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
   };
 
   const handleSubmitComment = async () => {
-    console.log("comment:", addcomment);
+    // console.log("comment:", addcomment);
     setIsSpinner(true);
     try {
       const postId = params.id;
@@ -102,7 +102,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
       }
     } catch (err) {
       setIsSpinner(false);
-      console.log("Failed to fetch create post.");
+      // console.log("Failed to fetch create post.");
     }
   };
 

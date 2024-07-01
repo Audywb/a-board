@@ -10,7 +10,6 @@ export default function Signin() {
   const [username, setUsername] = useState<string>("");
 
   const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log('Enter username', e.target.value);
     setUsername(e.target.value);
   };
 
@@ -21,7 +20,6 @@ export default function Signin() {
   };
 
   const handleSubmit = async () => {
-    console.log("Form submitted!");
     const res = await signIn("credentials", {
       username: username,
       callbackUrl: "/",

@@ -19,7 +19,7 @@ interface PostItem {
 }
 
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -31,7 +31,7 @@ export default function Home() {
   const [community, setCommunity] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [body, setBody] = useState<string>("");
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchPosts();
@@ -51,7 +51,7 @@ export default function Home() {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     setSearchQuery(event.target.value);
   };
 
@@ -81,7 +81,7 @@ export default function Home() {
         modal.showModal();
       }
     } else {
-      router.push("/sign-in")
+      router.push("/sign-in");
     }
   };
 
@@ -94,12 +94,12 @@ export default function Home() {
 
   const handleSelectedValue = (value: string) => {
     setSelectedValue(value);
-    console.log("Selected value:", value);
+    // console.log("Selected value:", value);
   };
 
   const handleSelectedCommu = (value: string) => {
     setCommunity(value);
-    console.log("Community value:", value);
+    // console.log("Community value:", value);
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +112,7 @@ export default function Home() {
 
   const handleSubmit = async () => {
     setIsSpinner(true);
-    console.log("Submit:", community, title, body, session?.user?.name);
+    // console.log("Submit:", community, title, body, session?.user?.name);
     const username = session?.user?.name;
     try {
       const response = await axios.post(
@@ -152,13 +152,15 @@ export default function Home() {
     <div className="flex bg-gray-100">
       <div className="w-full">
         <div
-          className={`flex justify-start w-full ${isOpen && "flex-col lg:flex-row"
-            }`}
+          className={`flex justify-start w-full ${
+            isOpen && "flex-col lg:flex-row"
+          }`}
         >
           <div className="py-2 lg:w-full">
             <div
-              className={`relative flex items-center bg-transparent w-full h-10 rounded-lg focus-within:shadow-lg overflow-hidden lg:border-green-100 lg:border-2 ${isOpen ? "border-green-100 border-2 visible" : ""
-                }`}
+              className={`relative flex items-center bg-transparent w-full h-10 rounded-lg focus-within:shadow-lg overflow-hidden lg:border-green-100 lg:border-2 ${
+                isOpen ? "border-green-100 border-2 visible" : ""
+              }`}
             >
               <div
                 className="grid place-items-center h-full w-12 text-text-base"
@@ -181,11 +183,14 @@ export default function Home() {
               </div>
               <input
                 onClick={handleIsOpen}
-                className={`lg:hidden peer h-full w-full outline-none text-sm text-text-base pr-2 bg-transparent transition-opacity duration-500 ${isOpen ? "opacity-100 visible" : "sm:hidden lg:block"
-                  }`}
+                className={`lg:hidden peer h-full w-full outline-none text-sm text-text-base pr-2 bg-transparent transition-opacity duration-500 ${
+                  isOpen ? "opacity-100 visible" : "sm:hidden lg:block"
+                }`}
                 type="text"
                 id="search"
                 placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
               <input
                 className="sm:hidden lg:block peer h-full w-0 lg:w-full outline-none text-sm text-text-base pr-2 bg-transparent"
@@ -213,6 +218,8 @@ export default function Home() {
             edit={false}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            searchValue={searchQuery}
+            commuValue={selectedValue}
           />
         </div>
       </div>

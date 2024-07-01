@@ -34,57 +34,201 @@ const DropDown: React.FC<{ onSelect: (value: string) => void }> = ({
           <li>
             <a
               className="hover:bg-green-100"
+              onClick={() => handleSelect("All")}
+            >
+              All
+            </a>
+          </li>
+          <li>
+            <a
+              className={`hover:bg-green-100 ${
+                selectedValue == "History" &&
+                "bg-green-100 flex justify-between"
+              }`}
               onClick={() => handleSelect("History")}
             >
               History
+              {selectedValue == "History" && (
+                <svg
+                  width="16"
+                  height="11"
+                  viewBox="0 0 16 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.2244 0.948242L5.05778 10.1149L0.891113 5.94824"
+                    stroke="#4A4A4A"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </a>
           </li>
           <li>
             <a
-              className="hover:bg-green-100"
+              className={`hover:bg-green-100 ${
+                selectedValue == "Food" && "bg-green-100 flex justify-between"
+              }`}
               onClick={() => handleSelect("Food")}
             >
               Food
+              {selectedValue == "Food" && (
+                <svg
+                  width="16"
+                  height="11"
+                  viewBox="0 0 16 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.2244 0.948242L5.05778 10.1149L0.891113 5.94824"
+                    stroke="#4A4A4A"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </a>
           </li>
           <li>
             <a
-              className="hover:bg-green-100"
+              className={`hover:bg-green-100 ${
+                selectedValue == "Pets" && "bg-green-100 flex justify-between"
+              }`}
               onClick={() => handleSelect("Pets")}
             >
               Pets
+              {selectedValue == "Pets" && (
+                <svg
+                  width="16"
+                  height="11"
+                  viewBox="0 0 16 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.2244 0.948242L5.05778 10.1149L0.891113 5.94824"
+                    stroke="#4A4A4A"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </a>
           </li>
           <li>
             <a
-              className="hover:bg-green-100"
+              className={`hover:bg-green-100 ${
+                selectedValue == "Health" && "bg-green-100 flex justify-between"
+              }`}
               onClick={() => handleSelect("Health")}
             >
               Health
+              {selectedValue == "Health" && (
+                <svg
+                  width="16"
+                  height="11"
+                  viewBox="0 0 16 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.2244 0.948242L5.05778 10.1149L0.891113 5.94824"
+                    stroke="#4A4A4A"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </a>
           </li>
           <li>
             <a
-              className="hover:bg-green-100"
+              className={`hover:bg-green-100 ${
+                selectedValue == "Fashion" &&
+                "bg-green-100 flex justify-between"
+              }`}
               onClick={() => handleSelect("Fashion")}
             >
               Fashion
+              {selectedValue == "Fashion" && (
+                <svg
+                  width="16"
+                  height="11"
+                  viewBox="0 0 16 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.2244 0.948242L5.05778 10.1149L0.891113 5.94824"
+                    stroke="#4A4A4A"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </a>
           </li>
           <li>
             <a
-              className="hover:bg-green-100"
+              className={`hover:bg-green-100 ${
+                selectedValue == "Exercise" &&
+                "bg-green-100 flex justify-between"
+              }`}
               onClick={() => handleSelect("Exercise")}
             >
               Exercise
+              {selectedValue == "Exercise" && (
+                <svg
+                  width="16"
+                  height="11"
+                  viewBox="0 0 16 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.2244 0.948242L5.05778 10.1149L0.891113 5.94824"
+                    stroke="#4A4A4A"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </a>
           </li>
           <li>
             <a
-              className="hover:bg-green-100"
+              className={`hover:bg-green-100 ${
+                selectedValue == "Others" && "bg-green-100 flex justify-between"
+              }`}
               onClick={() => handleSelect("Others")}
             >
               Others
+              {selectedValue == "Others" && (
+                <svg
+                  width="16"
+                  height="11"
+                  viewBox="0 0 16 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.2244 0.948242L5.05778 10.1149L0.891113 5.94824"
+                    stroke="#4A4A4A"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </a>
           </li>
         </ul>

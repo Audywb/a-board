@@ -1,4 +1,5 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import "@/css/index.css";
 import { useRouter } from "next/navigation";
@@ -18,6 +19,8 @@ interface PostCardProps {
   edit: boolean;
   onEdit: (item: PostItem) => void | null;
   onDelete: (id: string) => void | null;
+  searchValue: string;
+  commuValue: string;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -25,11 +28,13 @@ const PostCard: React.FC<PostCardProps> = ({
   edit,
   onEdit,
   onDelete,
+  searchValue,
+  commuValue
 }) => {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleEditClick = (item: PostItem) => {
-    console.log("Item:", item);
     onEdit(item);
   };
 
@@ -37,14 +42,38 @@ const PostCard: React.FC<PostCardProps> = ({
     onDelete(id);
   };
 
+  const highlightText = (text: string, query: string) => {
+    if (!query) return text;
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    console.log(parts)
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span key={index} className="bg-[#dfccaa]">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const filteredPosts = post.filter(
+    (post) =>
+      commuValue === "All" || post.community.toLowerCase().includes(commuValue.toLowerCase())
+  );
+
   const toPostDetail = (id: string) => {
     router.push(`detail/${id}`);
   };
 
   return (
     <div className="bg-white shadow-lg rounded-lg my-8 w-full">
-      {post.map((item, i) => (
-        <div key={i} className="post-card cursor-pointer" onClick={() => toPostDetail(item._id)}>
+      {filteredPosts.map((item, i) => (
+        <div
+          key={i}
+          className="post-card cursor-pointer"
+          onClick={() => toPostDetail(item._id)}
+        >
           <div className="flex items-start px-5 pt-6">
             <div className="avatar">
               <div className="rounded-full w-9 -my-2 mr-2">
@@ -78,10 +107,12 @@ const PostCard: React.FC<PostCardProps> = ({
                           alt="edit icon"
                         />
                       </button>
-                      <button onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteClick(item._id)
-                      }}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(item._id);
+                        }}
+                      >
                         <Image
                           src="/icon/trash-01.svg"
                           width={24}
@@ -99,7 +130,9 @@ const PostCard: React.FC<PostCardProps> = ({
             <div className="badge badge-ghost text-sm text-text-base p-3">
               {item.community}
             </div>
-            <p className="mt-2 font-bold text-text-base">{item.title}</p>
+            <p className="mt-2 font-bold text-text-base">
+              {highlightText(item.title, searchValue)}
+            </p>
             <p className="text-text-base text-sm whitespace-pre-line break-normal truncate truncate-2-lines">
               {item.body}
             </p>
@@ -111,7 +144,9 @@ const PostCard: React.FC<PostCardProps> = ({
                   height={22}
                   alt="Comments icon"
                 />
-                <p className="text-gray-300 ml-2">{item.count_comment} Comments</p>
+                <p className="text-gray-300 ml-2">
+                  {item.count_comment} Comments
+                </p>
               </div>
             </div>
           </div>

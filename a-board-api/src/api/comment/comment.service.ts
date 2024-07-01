@@ -11,7 +11,7 @@ export class CommentService {
   async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {
     const { username, comment, postId } = createCommentDto;
     const create_at = new Date();
-    console.log(username, comment, postId, create_at)
+    // console.log(username, comment, postId, create_at)
     const postObjectId = new Types.ObjectId(postId);
     const newComment = new this.commentModel({ username, comment, postId:postObjectId, create_at });
     return newComment.save();

@@ -15,11 +15,12 @@ interface PostItem {
   community: string;
   title: string;
   body: string;
+  count_comment: number;
 }
 
 export default function OurBlog() {
   const { data: session } = useSession();
-  const router = useRouter()
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSpinner, setIsSpinner] = useState<boolean>(false);
@@ -32,13 +33,12 @@ export default function OurBlog() {
   const [body, setBody] = useState<string>("");
   const [_id, set_ID] = useState<string>("");
   const [isEdit, setIsEdit] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const username = session?.user?.name;
     if (username) {
       fetchPosts(username);
-    }else{
-      router.push("/sign-in")
     }
   }, [session]);
 
@@ -58,6 +58,7 @@ export default function OurBlog() {
   if (isLoading)
     return (
       <div className="flex items-center justify-center mt-4">
+        {!session?.user && (<p className="mr-4">Please sign in.</p>)}
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-gray-300 motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
           role="status"
@@ -75,9 +76,13 @@ export default function OurBlog() {
   };
 
   const openModal = () => {
-    const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
-    if (modal) {
-      modal.showModal();
+    if (session?.user) {
+      const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
+      if (modal) {
+        modal.showModal();
+      }
+    } else {
+      router.push("/sign-in");
     }
   };
 
@@ -108,12 +113,10 @@ export default function OurBlog() {
 
   const handleSelectedValue = (value: string) => {
     setSelectedValue(value);
-    console.log("Selected value:", value);
   };
 
   const handleSelectedCommu = (value: string) => {
     setCommunity(value);
-    console.log("Community value:", value);
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +129,7 @@ export default function OurBlog() {
 
   const handleSubmit = async () => {
     setIsSpinner(true);
-    console.log("Submit:", community, title, body, session?.user?.name);
+    // console.log("Submit:", community, title, body, session?.user?.name);
     const username = session?.user?.name;
     try {
       if (isEdit) {
@@ -180,7 +183,6 @@ export default function OurBlog() {
   };
 
   const handleEdit = (item: PostItem) => {
-    console.log(item);
     setIsEdit(true);
     set_ID(item._id);
     setCommunity(item.community);
@@ -190,7 +192,7 @@ export default function OurBlog() {
   };
 
   const handleDelete = (id: string) => {
-    console.log("Delete:", id);
+    // console.log("Delete:", id);
     set_ID(id);
     openModalDelete();
   };
@@ -201,7 +203,6 @@ export default function OurBlog() {
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_BASE_URL_AUTH}/post/delete/${_id}`
       );
-      console.log(response);
       if (response.statusText == "OK") {
         set_ID("");
         closeModalDelete();
@@ -212,6 +213,10 @@ export default function OurBlog() {
     } catch (err) {
       console.log("Failed to delete post.");
     }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
   };
 
   return (
@@ -255,12 +260,16 @@ export default function OurBlog() {
                 type="text"
                 id="search"
                 placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
               <input
                 className={`sm:hidden lg:block peer h-full w-0 lg:w-full outline-none text-sm text-text-base pr-2 bg-transparent`}
                 type="text"
                 id="search"
                 placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
@@ -280,6 +289,8 @@ export default function OurBlog() {
             edit={true}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            searchValue={searchQuery}
+            commuValue={selectedValue}
           />
         </div>
       </div>
@@ -291,7 +302,9 @@ export default function OurBlog() {
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-xl text-text-base">Create Post!</h3>
+          <h3 className="font-bold text-xl text-text-base">
+            {isEdit ? "Edit Post" : "Create Post"}
+          </h3>
           <div className="mt-4">
             <SelectCommu
               onSelect={handleSelectedCommu}
