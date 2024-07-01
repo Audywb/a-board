@@ -10,6 +10,7 @@ interface PostItem {
   community: string;
   title: string;
   body: string;
+  count_comment: number;
 }
 
 interface PostCardProps {
@@ -61,10 +62,13 @@ const PostCard: React.FC<PostCardProps> = ({
                   {item.username}{" "}
                 </h2>
                 {edit && (
-                  <>
+                  <div className="">
                     <div className="flex justify-end">
                       <button
-                        onClick={() => handleEditClick(item)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(item);
+                        }}
                         className="mr-1"
                       >
                         <Image
@@ -74,7 +78,10 @@ const PostCard: React.FC<PostCardProps> = ({
                           alt="edit icon"
                         />
                       </button>
-                      <button onClick={() => handleDeleteClick(item._id)}>
+                      <button onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteClick(item._id)
+                      }}>
                         <Image
                           src="/icon/trash-01.svg"
                           width={24}
@@ -83,7 +90,7 @@ const PostCard: React.FC<PostCardProps> = ({
                         />
                       </button>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
@@ -104,7 +111,7 @@ const PostCard: React.FC<PostCardProps> = ({
                   height={22}
                   alt="Comments icon"
                 />
-                <p className="text-gray-300 ml-2">8 Comments</p>
+                <p className="text-gray-300 ml-2">{item.count_comment} Comments</p>
               </div>
             </div>
           </div>

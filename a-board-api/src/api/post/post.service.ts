@@ -5,7 +5,9 @@ import { Posts } from 'src/schemas/post.schema';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Posts.name) private postModel: Model<Posts>) {}
+  constructor(
+    @InjectModel(Posts.name) private postModel: Model<Posts>
+  ) {}
 
   async createPost(username: string, community: string, title: string, body: string): Promise<{ message: string, data: string }> {
     const create_at = new Date();
@@ -22,9 +24,34 @@ export class PostService {
     return this.postModel.find({ _id }).lean().exec();
   }
 
-  async findAllPost(): Promise<Posts[]> {
-    return this.postModel.find().sort({ create_at: -1 }).lean().exec();
-  }
+  async findAllPostsAndCommentCounts(): Promise<any[]> {
+    return this.postModel.aggregate([
+      {
+        $lookup: {
+          from: 'comments', // collection name in the database
+          localField: '_id',
+          foreignField: 'postId',
+          as: 'comments'
+        }
+      },
+      {
+        $addFields: {
+          count_comment: { $size: '$comments' }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          create_at: 1,
+          community: 1,
+          title: 1,
+          body: 1,
+          count_comment: 1
+        }
+      }
+    ]).exec();
+}
 
   async updatePostById(id: string, updatedPost: Partial<Posts>): Promise<{ message: string }> {
     try {

@@ -34,7 +34,7 @@ export class PostController {
   @Header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type')
   async getAllPost() {
-    return this.postService.findAllPost();
+    return this.postService.findAllPostsAndCommentCounts();
   }
 
   @Put('update/:id')
@@ -50,7 +50,7 @@ export class PostController {
   @Delete('delete/:id')
   async deletePostById(@Param('id') id: string): Promise<{ message: string }> {
     try {
-      const result = await this.postService.deletePostById(id);
+      await this.postService.deletePostById(id);
       return { message: 'Post deleted successfully' };
     } catch (error) {
       throw new NotFoundException(error.message);

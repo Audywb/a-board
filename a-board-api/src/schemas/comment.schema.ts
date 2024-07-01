@@ -1,12 +1,10 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
-
-export type CommentDocument = Comment & Document;
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema()
 export class Comment {
-  @Prop({ required: true })
-  postId: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
+  postId: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
   comment: string;
@@ -18,4 +16,5 @@ export class Comment {
   create_at: Date;
 }
 
+export type CommentDocument = Comment & Document;
 export const CommentSchema = SchemaFactory.createForClass(Comment);

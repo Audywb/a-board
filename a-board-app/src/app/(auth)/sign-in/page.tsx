@@ -2,6 +2,9 @@
 import { signIn } from "next-auth/react";
 import React, { useState, ChangeEvent } from "react";
 import Image from "next/image";
+import { Castoro } from "next/font/google";
+
+const castoro = Castoro({ weight: "400", subsets: ["latin"] });
 
 export default function Signin() {
   const [username, setUsername] = useState<string>("");
@@ -61,9 +64,18 @@ export default function Signin() {
             >
               <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
             </svg>
-            <input type="text" className="grow" placeholder="Username" onChange={handleUsernameChange} onKeyDown={handleKeyDown}/>
+            <input type="text" className="grow" placeholder="Username" onChange={handleUsernameChange} onKeyDown={handleKeyDown} />
           </label>
+          <div className={castoro.className}>
+            <button
+              className="bg-success hover:bg-green-300 w-full text-white py-2.5 px-1.5 lg:px-2 xl:px-4 rounded-lg text-lg font-medium font mt-3"
+              onClick={handleSubmit}
+            >
+              Sign In
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
   );

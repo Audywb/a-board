@@ -15,6 +15,7 @@ interface PostItem {
   community: string;
   title: string;
   body: string;
+  count_comment: number;
 }
 
 export default function Home() {
@@ -30,6 +31,7 @@ export default function Home() {
   const [community, setCommunity] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [body, setBody] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchPosts();
@@ -46,6 +48,11 @@ export default function Home() {
       setError("Failed to fetch posts");
       setIsLoading(false);
     }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    setSearchQuery(event.target.value);
   };
 
   if (isLoading)
@@ -68,11 +75,12 @@ export default function Home() {
   };
 
   const openModal = () => {
-    if (session?.user){
-    const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
-    if (modal) {
-      modal.showModal();
-    }}else{
+    if (session?.user) {
+      const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
+      if (modal) {
+        modal.showModal();
+      }
+    } else {
       router.push("/sign-in")
     }
   };
@@ -144,15 +152,13 @@ export default function Home() {
     <div className="flex bg-gray-100">
       <div className="w-full">
         <div
-          className={`flex justify-start w-full ${
-            isOpen && "flex-col lg:flex-row"
-          }`}
+          className={`flex justify-start w-full ${isOpen && "flex-col lg:flex-row"
+            }`}
         >
           <div className="py-2 lg:w-full">
             <div
-              className={`relative flex items-center bg-transparent w-full h-10 rounded-lg focus-within:shadow-lg overflow-hidden lg:border-green-100 lg:border-2 ${
-                isOpen ? "border-green-100 border-2 visible" : ""
-              }`}
+              className={`relative flex items-center bg-transparent w-full h-10 rounded-lg focus-within:shadow-lg overflow-hidden lg:border-green-100 lg:border-2 ${isOpen ? "border-green-100 border-2 visible" : ""
+                }`}
             >
               <div
                 className="grid place-items-center h-full w-12 text-text-base"
@@ -175,18 +181,19 @@ export default function Home() {
               </div>
               <input
                 onClick={handleIsOpen}
-                className={`lg:hidden peer h-full w-full outline-none text-sm text-text-base pr-2 bg-transparent transition-opacity duration-500 ${
-                  isOpen ? "opacity-100 visible" : "sm:hidden lg:block"
-                }`}
+                className={`lg:hidden peer h-full w-full outline-none text-sm text-text-base pr-2 bg-transparent transition-opacity duration-500 ${isOpen ? "opacity-100 visible" : "sm:hidden lg:block"
+                  }`}
                 type="text"
                 id="search"
                 placeholder="Search"
               />
               <input
-                className={`sm:hidden lg:block peer h-full w-0 lg:w-full outline-none text-sm text-text-base pr-2 bg-transparent`}
+                className="sm:hidden lg:block peer h-full w-0 lg:w-full outline-none text-sm text-text-base pr-2 bg-transparent"
                 type="text"
                 id="search"
                 placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
