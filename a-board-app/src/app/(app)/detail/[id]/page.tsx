@@ -164,7 +164,7 @@ export default function PostDetail({ params }: { params: { id: string } }) {
                 <p className="mt-2 font-bold text-text-base text-2xl">
                   {post.title}
                 </p>
-                <p className="text-text-base text-sm lg:text-lg whitespace-pre-line break-normal truncate truncate-2-lines">
+                <p className="text-text-base text-sm lg:text-lg">
                   {post.body}
                 </p>
                 <div className="mt-4 flex items-center justify-start">
