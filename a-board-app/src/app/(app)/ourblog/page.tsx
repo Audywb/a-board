@@ -203,7 +203,7 @@ export default function OurBlog() {
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_BASE_URL_AUTH}/post/delete/${_id}`
       );
-      if (response.statusText == "OK") {
+      if (response) {
         set_ID("");
         closeModalDelete();
         if (username) {
